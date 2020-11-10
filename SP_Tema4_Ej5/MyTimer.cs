@@ -13,34 +13,44 @@ namespace SP_Tema4_Ej5
         public int interval;
         static object l = new object();
         Thread thRun;
-        Thread thPause;
+        //Thread thPause;
         private bool isPaused = false;
-        private bool finished = false;
+        //private bool finished = false;
         Functions function;
         //Thread thRun;
         //Thread thPause;
+        public bool acabo = false;
         public void run()
         {
-            thRun = new Thread(runMethod);
-            thPause = new Thread(aux);
-            isPaused = false;
-            thRun.Start();
+
+            lock (l)
+            {
+                if (!acabo)
+                {
+                    isPaused = false;
+                    Monitor.Pulse(l);
+                }
+            }
 
         }
         private void runMethod()
         {
             //while (!finished)
             //{
-                while (!isPaused)
+            while (!acabo)
+            {
+                if (!acabo)
                 {
-                    lock (l)
+                    while (!isPaused)
                     {
-                        function();
+                        lock (l)
+                        {
+                            function();
+                        }
+                        Thread.Sleep(interval);
                     }
-                    Thread.Sleep(interval);
-                    
                 }
-
+            }
                 /*while (isPaused)
                 {
                     Monitor.Pulse(l);
@@ -51,10 +61,18 @@ namespace SP_Tema4_Ej5
 
         public void pause()
         {
-            isPaused = true;
+            
+                lock(l){
+
+                if (!acabo)
+                    {
+                        isPaused = true;
+                    }
+                }
+            
         }
 
-        private void aux()
+        /*private void aux()
         {
             lock (l)
             {
@@ -63,11 +81,16 @@ namespace SP_Tema4_Ej5
                     Monitor.Wait(l);
                 }
             }
-        }
+        }*/
 
         public MyTimer(Functions func)
         {
             this.function = func;
+            thRun = new Thread(runMethod);
+            thRun.IsBackground = false;
+            isPaused = true;
+            thRun.Start();
+
             
             
         }

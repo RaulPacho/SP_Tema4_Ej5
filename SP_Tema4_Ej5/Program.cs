@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace SP_Tema4_Ej5
 {
@@ -12,9 +14,11 @@ namespace SP_Tema4_Ej5
         }
         static void Main(string[] args)
         {
+            Console.WriteLine("si, llego");
             MyTimer t = new MyTimer(increment);
             t.interval = 1000;
             string op = "";
+            Thread.CurrentThread.IsBackground = true;
             do
             {
                 Console.WriteLine("Press any key to start.");
@@ -25,7 +29,9 @@ namespace SP_Tema4_Ej5
                 t.pause();
                 Console.WriteLine("Press 1 to restart or Enter to end.");
                 op = Console.ReadLine();
+                t.acabo = !(op == "1");
             } while (op == "1");
+
         }
     }
 }
