@@ -22,7 +22,7 @@ namespace SP_Tema4_Ej5
         public bool acabo = false;
         public void run()
         {
-
+            //Algo comentao
             lock (l)
             {
                 if (!acabo)
